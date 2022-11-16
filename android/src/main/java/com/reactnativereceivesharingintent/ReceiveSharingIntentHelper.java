@@ -68,11 +68,12 @@ public class ReceiveSharingIntentHelper {
 
       }else if(Objects.equals(action, Intent.ACTION_VIEW)){
         String link = intent.getDataString();
+        String mimeType = intent.getType();
         WritableMap files = new WritableNativeMap();
         WritableMap file = new WritableNativeMap();
         file.putString("contentUri",null);
         file.putString("filePath", null);
-        file.putString("mimeType",null);
+        file.putString("mimeType",mimeType);
         file.putString("text",null);
         file.putString("weblink", link);
         file.putString("fileName", null);
