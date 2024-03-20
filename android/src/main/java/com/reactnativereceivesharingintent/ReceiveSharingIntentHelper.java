@@ -27,14 +27,14 @@ public class ReceiveSharingIntentHelper {
   }
 
   @RequiresApi(api = Build.VERSION_CODES.KITKAT)
-  public void sendFileNames(Context context, Intent intent, Promise promise){
+  public boolean sendFileNames(Context context, Intent intent, Promise promise){
     try {
       String action = intent.getAction();
       String type = intent.getType();
-      if(type == null) { return; }
+      if(type == null) { return false; }
       if(!type.startsWith("text") && (Objects.equals(action, Intent.ACTION_SEND) || Objects.equals(action, Intent.ACTION_SEND_MULTIPLE))){
         WritableMap files = getMediaUris(intent,context);
-        if(files == null) return;
+        if(files == null) return false;
         promise.resolve(files);
       }else if(type.startsWith("text") && Objects.equals(action, Intent.ACTION_SEND)){
         String text = null;
@@ -45,7 +45,7 @@ public class ReceiveSharingIntentHelper {
         }catch (Exception ignored){ }
         if(text == null){
           WritableMap files = getMediaUris(intent,context);
-          if(files == null) return;
+          if(files == null) return false;
           promise.resolve(files);
         }else{
           WritableMap files = new WritableNativeMap();
@@ -99,10 +99,13 @@ public class ReceiveSharingIntentHelper {
           promise.resolve(files);
       }else{
         promise.reject("error","Invalid file type.");
+        return false;
       }
     }catch (Exception e){
       promise.reject("error",e.toString());
+      return false;
     }
+    return true;
   };
 
 
